@@ -1,1 +1,1 @@
-# SQL_Syntaxes
+# SQL Queries
