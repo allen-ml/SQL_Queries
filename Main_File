@@ -1,0 +1,570 @@
+
+/*
+--Return all columns
+SELECT *
+FROM film
+
+--Return “title” column
+SELECT title
+FROM film
+
+--Return “title, description” column
+SELECT title, description
+FROM film
+
+--Change the name of the column
+SELECT description as funny_name_of_film
+FROM film
+
+--Change for client facing column names with space
+SELECT description as "funny name of film"
+FROM film
+
+--Always Limit your queries
+SELECT * 
+FROM film
+LIMIT 5 -- Limit to only 5 rows
+*/
+
+
+--
+--
+
+/*
+-- Q1 SELECT statement that selects 
+-- everything from the category table.
+SELECT *
+FROM category;
+
+-- Q2 Create a SELECT statement that returns 
+-- the phone and postal code from the 
+--address table.
+SELECT phone, postal_code
+FROM address
+LIMIT 50;
+
+--Q3 Create a single SELECT statement that 
+--returns the first 50 rows from the city tabler.
+SELECT *
+FROM city
+LIMIT 50
+*/
+--
+--
+
+
+/*
+-- 
+
+
+how many rows are in the film rable
+SELECT COUNT (*)
+FROM film;
+*/
+
+-- Column Name Double qoute ""
+
+
+/*
+-- count how many rows are in the film rable
+-- if some titles are missing, they are not reported
+SELECT COUNT (title)
+FROM film
+*/
+
+/*
+SELECT DISTINCT rating
+FROM film;
+
+
+SELECT COUNT(DISTINCT rating)
+FROM film
+*/
+
+-- Get all the films that are rated R
+SELECT * 
+FROM film
+WHERE rating = 'R';
+
+
+-- Get all the films that are longer than 2 hours
+SELECT * 
+FROM film
+WHERE length > 120;
+
+
+-- Get all the films that are between 2-3 hours
+SELECT * 
+FROM film
+WHERE  length BETWEEN 120 and 239;
+
+
+-- Get all the films that are G, PG, PG-13 rated
+SELECT * 
+FROM film
+WHERE rating IN ('G','PG','PG-13');
+
+-- Get the number of all the films that are G, PG, PG-13 rated
+SELECT COUNT(*) 
+FROM film
+WHERE rating IN ('G','PG','PG-13');
+
+-- Get info from AFRICAN EGG
+--Things are case sensitive
+SELECT * 
+FROM film
+WHERE title = 'AFRICAN EGG';
+
+-- Get info from As, Starts with an A
+-- use the wild card, everything
+--Things are case sensitive
+SELECT * 
+FROM film
+WHERE title LIKE 'A%';
+
+-- Get info from As, Starts with an B and ends with a D
+-- use the wild card, everything
+--Things are case sensitive
+SELECT * 
+FROM film
+WHERE title LIKE 'B%D';
+
+-- iLIKE rather than LIKE when you want 
+--Things are case sensitive
+SELECT * 
+FROM film
+WHERE title iLIKE '%D';
+
+SELECT *
+FROM customer
+WHERE first_name LIKE 'E%';
+
+-- Ger every film is g-rated and/OR has 2.99 rental rate
+SELECT *
+FROM film
+WHERE rating = 'G' AND rental_rate != 2.99;
+
+-- Ger every film is not g-rated and/OR have 2.99 rental rate
+SELECT *
+FROM film
+WHERE rating != 'G' AND rental_rate = 2.99;
+
+-- Get all the films that are between 2-3 hours
+SELECT * 
+FROM film
+WHERE length NOT BETWEEN 120 and 239;
+
+-- get all the films, sorted from longest to shortest
+SELECT *
+FROM film
+ORDER by length;
+
+-- get all the films, sorted from longest to shortest, then sorted by replacement cost
+SELECT *
+FROM film
+ORDER by length DESC, replacement_cost ASC;
+
+-- Q1. SELECT statement that selects 
+--everything from the rental table.
+SELECT *
+FROM rental;
+
+-- Q2. Using inventory table, create a 
+--statement that employs SELECT and 
+--WHERE to select the store IDs that are 
+--not equal to 2. Return the timestamp for 
+--rows that meet these requirements. 
+
+SELECT last_update
+from inventory
+WHERE store_id !=2;
+
+--Q3
+SELECT DISTINCT rating
+From film;
+
+--Q4
+SELECT COUNT (DISTINCT actor_ID)
+FROM film_actor;
+
+--Q5
+SELECT film_id, category_id
+FROM film_category
+where category_id BETWEEN 3 AND 10;
+
+--Q6
+SELECT district
+From address
+WHERE city_id > 300 OR city_id < 250;
+
+--Q6
+SELECT district, city_id
+From address
+WHERE city_id !BETWEEN 250 and 300;
+
+--Q8
+SELECT country_id,country
+FROM country
+WHERE country LIKE 'A%'--starts with an A
+OR country LIKE 'B%'-- starts with a B
+OR country LIKE '%esh' --Ends with esh
+;
+
+--What is the average, mix, min duration for films
+SELECT AVG(rental_rate) as avg_rental_rate,
+MAX(rental_rate) AS max_retal_rate,
+round(MIN(rental_rate),4) AS min_rental_rate
+FROM film;
+
+-- What is the maximum duration for G-rated films
+SELECT AVG(rental_rate) as avg_rental_rate,
+MAX(rental_rate) AS max_retal_rate,
+round(MIN(rental_rate),4) AS min_rental_rate
+FROM film
+WHERE rating = 'G';
+
+--AVG is your aggregate function
+SELECT rating, AVG(rental_rate)
+FROM film
+GROUP by rating;
+
+
+-- For each MPA rating, give me the average length of the films
+-- Everything you wanna use should put in both GROUP BY and SELECT
+
+SELECT rating, MIN(length),MAX(length),ROUND(AVG(length),2)
+FROM film
+GROUP by rating;
+
+SELECT rating, MIN(length),MAX(replacement_cost),ROUND(AVG(length),2)
+FROM film
+GROUP by rating;
+
+SELECT rating, rental_rate,MIN(length),MAX(replacement_cost),ROUND(AVG(length),2)
+FROM film
+GROUP by rating, rental_rate
+ORDER by AVG(length);
+
+SELECT rating, rental_rate,MIN(length),MAX(replacement_cost),ROUND(AVG(length),2)
+FROM film
+GROUP by rating, rental_rate
+ORDER by rating;
+
+-- WHERE filters whings "after" GROUP BY, WHERE filters "before" GROUP BY
+SELECT rating,
+round(AVG(length),3) AS avg_length
+FROM film
+GROUP BY rating
+HAVING AVG(length) > 115;
+
+-- WHERE filters whings "after" GROUP BY, WHERE filters "before" GROUP BY
+SELECT rating,
+round(AVG(length),3) AS avg_length
+FROM film
+WHERE rental_rate = 2.99 AND length > 115
+GROUP BY rating;
+
+--Ex. III page 79
+--Q1
+SELECT city
+FROM city
+WHERE country_id BETWEEN 75 AND 100;
+
+--Q2
+SELECT country_id, COUNT (country_id)
+FROM city
+GROUP BY country_id
+ORDER BY country_id
+LIMIT 10;
+
+--Q3
+SELECT round(AVG(rental_duration),2)
+FROM film;
+
+/* Q4-Return the film IDs, description, and 
+rental rates of films with the minimum 
+rental rates.
+*/
+SELECT film_id, description, rental_rate,round(MIN(rental_rate),3)
+FROM film
+WHERE rental_rate = 0.99
+GROUP BY film_id,description,rental_rate;
+
+SELECT film_id, description, rental_rate,round(MIN(rental_rate),3)
+FROM film
+GROUP BY film_id,description,rental_rate
+HAVING rental_rate = 0.99;
+
+/*Q5 Rename the last update column in t
+film category table to “last_online.” 
+Return just that renamed column.
+*/
+
+SELECT last_update as last_online
+FROM film_category;
+
+/*Q6-In the inventory table, for the first 50 
+inventory IDs, group by store ID, and 
+count the number in each store. Return 
+store ID and the count. Rename the 
+count column to “total”.
+*/
+
+SELECT store_id, COUNT(inventory_id)
+FROM inventory 
+WHERE inventory_id BETWEEN 1 AND 50
+GROUP BY store_id;
+
+SELECT * 
+FROM rental;
+
+-- Primary KEYS - PK
+-- Get customer names who make rental
+-- The values in the customer ID column should from rental to customers
+SELECT *
+FROM rental
+JOIN customer on rental.customer_id = customer.customer_id;
+
+SELECT *
+FROM rental
+JOIN customer on rental.customer_id = customer.customer_id;
+
+/* Get actor names and film IDS they have appeared in
+1) actor table - actor names
+2) film_actor table - film_ids
+*/
+
+SELECT*
+FROM film_actor;
+
+SELECT*
+FROM actor;
+
+SELECT*
+FROM film_actor
+JOIN actor on actor.actor_id=film_actor.actor_id;
+
+--Get actor firm name and all column from film_actor
+SELECT actor.first_name, film_actor.*
+FROM film_actor
+JOIN actor on actor.actor_id=film_actor.actor_id;
+
+--Get actor firm name and all column from film_actor
+SELECT actor.first_name, actor.last_name, COUNT(*)
+FROM actor
+JOIN film_actor on actor.actor_id=film_actor.actor_id
+GROUP BY actor.first_name, actor.last_name;
+
+-- list both country and city names
+SELECT city.city_id, address.city_id, address.address, city.city, country.country
+FROM city
+JOIN country ON city.country_id=country.country_id
+-- for the next join, we need to find a common column
+-- we use city_id
+JOIN address ON address.city_id=city.city_id;
+
+-- Give customers with mailing addresses
+SELECT customer.first_name, customer.last_name, address.address,city.city,country.country
+FROM city
+JOIN country ON city.country_id=country.country_id
+-- for the next join, we need to find a common column
+-- we use city_id
+JOIN address ON address.city_id=city.city_id
+--Now bring customer addresses
+JOIN customer ON address.address_id=customer.address_id
+WHERE country = 'Israel';
+
+--EX.4
+/*Q1 Create an INNER JOIN statement that joins city 
+with country and prints out all columns. 
+*/
+
+SELECT * 
+FROM city
+JOIN country on country.country_id=city.country_id;
+
+/*Q2 Create an INNER JOIN statement that joins film 
+with language and prints: film_id, rental_rate, 
+release_year, and language.*/
+
+SELECT film_id, rental_rate, release_year, language
+FROM film
+JOIN language on language.language_id=film.language_id;
+
+
+/*Q3 Create an INNER JOIN statement that joins film 
+to film_actor. Only include: title, rental_rate, 
+description, rental_duration, rating, and 
+actor_id. */
+
+SELECT title, rental_rate, description, rental_duration, rating, actor_id
+FROM film
+JOIN film_actor on film.film_id=film_actor.film_id;
+
+/*Q4 ADVANCED: Create an INNER JOIN statement 
+that provides information on all of the films at 
+store 2. Include information on title, 
+description, inventory id, and rating.
+*/
+-- no need to call the table name down here when the column names are unique
+SELECT title, description, inventory_id, rating
+FROM film
+JOIN inventory ON inventory.film_id=film.film_id
+WHERE store_id=2;
+
+
+/*Q5 ADVANCED: Create an INNER JOIN statement 
+that counts the total number of cities in each 
+country. Rename the count to “total_cities”. 
+Sort the results by countries with maximum 
+amount of cities to least amount of cities.
+*/
+--COUNT the number of rows that have the same number of coutries
+--with the same country name
+SELECT country,COUNT(country)
+FROM country
+JOIN city ON city.country_id=country.country_id
+GROUP BY country
+--ORDER BY COUNT(*) DESC --OR use column location from SELECT 
+ORDER BY 1 DESC;
+
+
+SELECT MIN(rental_rate)
+FROM film;
+
+SELECT *
+FROM film
+WHERE rental_rate=0.99;
+
+-- USE subquery
+SELECT *
+FROM film
+WHERE rental_rate=
+--subquery
+(SELECT MIN(rental_rate)
+FROM film);
+
+
+-- USE subquery
+SELECT *
+FROM film
+WHERE length > (SELECT AVG(length)
+				FROM film);
+				
+-- USE subquery
+SELECT *
+FROM film
+WHERE rental_rate< (SELECT AVG(rental_rate)
+					FROM film);
+					
+--Compute the number of films per rental rate
+SELECT rental_rate, COUNT(*)
+FROM film
+GROUP BY rental_rate;
+
+SELECT title, film.rental_rate, num_films_with_rental_rate
+FROM film
+-- we name the subquery table "rental_rate_counts"
+JOIN (SELECT rental_rate, COUNT(*) AS num_films_with_rental_rate
+		FROM film
+		GROUP BY rental_rate) rental_rate_counts
+		ON rental_rate_counts.rental_rate=film.rental_rate;
+		
+-- Give me all the addressed that are in Mexico (old way - No subquery)
+SELECT city.city_id
+FROM address
+JOIN city ON address.city_id=city.city_id
+JOIN country on country.country_id=city.country_id
+WHERE country = 'Mexico';
+
+-- Give me all the addressed that are in Mexico
+-- New way
+SELECT city_id
+FROM city
+JOIN country ON country.country_id=city.country_id
+WHERE country = 'Mexico';
+
+SELECT *
+FROM address
+WHERE city_id IN (SELECT city_id
+					FROM city
+					JOIN country ON country.country_id=city.country_id
+					WHERE country = 'Mexico'
+					);
+
+
+-- 1.find the average rental rate
+SELECT round(AVG (rental_rate),2)
+FROM film;
+
+--2. Find the average film length
+SELECT round(AVG(length),2)
+FROM film;
+
+SELECT *
+FROM film
+WHERE rental_rate < (SELECT round(AVG (rental_rate),2)
+					 FROM film)
+					 AND
+	length <		 (SELECT round(AVG(length),2)
+					FROM film);
+
+--Ex. 5 Slide 115
+/*Q1. Create an INNER JOIN statement that joins 
+film & film_actor. Print out the actor_id & 
+film_id for films with a rental rate above 
+$2.99.*/
+
+SELECT film_actor.actor_id,film.film_id
+FROM film
+JOIN film_actor on film.film_id=film_actor.film_id
+WHERE rental_rate > 2.99;
+
+/*2. Create a SUBQUERY from the film table to 
+only select film ids for films with a rental rate 
+above $2.99. Create an OUTER QUERY that 
+prints out actor_ids and film_id from the 
+film_actor table for those films that meet the 
+criteria (Hint: Use WHERE and IN). */
+
+
+SELECT film_id
+FROM film
+WHERE rental_rate > 2.99;
+					
+SELECT actor_id,film_id
+FROM film_actor
+WHERE film_id in (SELECT film_id
+					FROM film
+					WHERE rental_rate > 2.99);
+					
+--Get customers W/ more than 30 rental
+SELECT customer_id, COUNT(*)
+FROM rental
+GROUP BY customer_id
+HAVING COUNT(*)>30;
+
+/*Advanced: Create a SUBQUERY that 
+provides the customer ids for all 
+customers with more than 30 rentals. 
+Then use an OUTER QUERY to print out 
+the first name, last name, and email for 
+these valuable customers. ORDER BY 
+last name (starting at the end of the 
+alphabet).*/
+
+
+--Get customers W/ more than 30 rental
+SELECT customer_id
+FROM rental
+GROUP BY customer_id
+HAVING COUNT(*)>30;
+
+SELECT * 
+FROM customer
+WHERE customer_id IN (SELECT customer_id
+					FROM rental
+					GROUP BY customer_id
+					HAVING COUNT(*)>30)
+
+
